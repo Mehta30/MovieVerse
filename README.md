@@ -32,7 +32,8 @@ A JavaScript-based web app that allows users to search movies and view their det
 ## ⚙️ Tech Stack
 
 - **Frontend:** HTML, CSS, JavaScript  
-- **API Used:** 🎥 [OMDb API](https://www.omdbapi.com/) – for movie data  
+- **API Used:** 🎥 [OMDb API](https://www.omdbapi.com/) – for movie data
+- **API_Key: "805a112b234ae9a90ef7427a5b1074a7"(TMBD)
 
 ---
 
