@@ -36,17 +36,6 @@ A JavaScript-based web app that allows users to search movies and view their det
 
 ---
 
-## 🧩 Folder Structure
-movie-explorer/
-│
-├── index.html # UI layout
-│
-├── assets/
-| ├── style.css # Styling
-│ ├── script.js # JavaScript logic
-│
-└── README.md # Documentation
-
 ## 🔑 API Setup
 
 1. Go to [https://www.omdbapi.com/apikey.aspx](https://www.omdbapi.com/apikey.aspx)  
