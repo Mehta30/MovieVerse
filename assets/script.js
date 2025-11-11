@@ -14,7 +14,7 @@ fetch(`${URL}?apikey=${apiKey}&t=${movieName}`)
 })
 .then(movieData=>{
     if (movieData.length === 0) {
-      output.innerHTML = `<p style="color:red;">No city found!!!<br> Enter a valid city!! :(</p>`;
+      output.innerHTML = `<p style="color:red;">No Movie found!!!<br> Enter a valid Movie Name!! :(</p>`;
       return;
     }
     console.log("Movie name --> ",movieData.Title);
