@@ -1,9 +1,32 @@
-const apiKey = "acd969b8";
-const URL = "https://www.omdbapi.com/";
+const Ombd_apiKey = "acd969b8";
+const Tmbd_apiKey = "805a112b234ae9a90ef7427a5b1074a7";
+const Ombd_URL = "https://www.omdbapi.com/";
+const Tmbd_URL = "https://api.themoviedb.org/3/";
 const input = document.querySelector(".user-search");
 let output = document.querySelector("#output");
 let movieName = "";
 const slider = document.querySelector('.mov-slider');
+
+function getIMBD(movieName){
+  return (async () => {
+      const res = await fetch(`${Ombd_URL}?apiKey=${Ombd_apiKey}&t=${movieName}`);
+      const rating = await res.json();
+      return rating.imdbRating;
+  })();
+}
+function getRuntime(id){
+  return (async () => {
+    const res = await fetch(`${Tmbd_URL}movie/${id}?api_key=${Tmbd_apiKey}`);
+    const time=await res.json()
+    return time.runtime;    
+  })();
+}
+
+function getYear(year) {
+  const dateObj = new Date(year);
+  return dateObj.getFullYear();
+
+}
 
 function convertMinutesToHMS(minutes) {
   let totalSeconds = Math.floor(minutes * 60);
@@ -16,27 +39,49 @@ function convertMinutesToHMS(minutes) {
   return `${hours}h ${mins}m`;
 }
 
+(async () => {
+  const res = await fetch(`${Tmbd_URL}discover/movie?api_key=${Tmbd_apiKey}&query=&sort_by=vote_average.desc&vote_count.gte=200&with_original_language=en`);
+  const Top_movieData = await res.json()
+  let i = 0;
+  const slides = document.querySelectorAll(".mov-slider .slide");
+  for (let slide of slides) {
+    let img = slide.querySelector(".img-cont");
+    img.style.backgroundImage = `url(httpsz://image.tmdb.org/t/p/w500${Top_movieData.results[i].poster_path})`;
+    let top_movieName = slide.querySelector(".text-cont .mov-name");
+    let top_movieInfo = slide.querySelector(".text-cont .info");
+    top_movieName.innerText = `${Top_movieData.results[i].title}`;
+    const year = getYear(Top_movieData.results[i].release_date);
+    const Runtime= await getRuntime(Top_movieData.results[i].id);
+    const rating= await getIMBD(Top_movieData.results[i].title);
+    top_movieInfo.innerText = `${year} • ${convertMinutesToHMS(Runtime)} • ${rating}⭐`;
+    console.log(Top_movieData.results[i].title);
+    i++;
+  };
+
+})();
+
+
 
 input.addEventListener("keydown", (event) => {
-  if(event.key === "Enter"){
-  movieName = input.value;
-  fetch(`${URL}?apikey=${apiKey}&t=${movieName}`)
-    .then(response => {
-      console.log(response);
-      console.log(`${URL}?apikey=${apiKey}&t=${movieName}`);
-      return response.json();
-    })
-    .then(movieData => {
-      if (movieData.response === "False") {
-        output.innerHTML = `<p style="color:red;">No Movie found!!!<br> Enter a valid Movie Name!! :(</p>`;
-        return;
-      }
-      console.log("Movie name --> ", movieData.Title);
-      console.log("Released date --> ", movieData.Released);
-      console.log("Runtime ---> ", movieData.Runtime);
-      let timelength=parseInt(movieData.Runtime); 
-      let str=convertMinutesToHMS(timelength);
-      output.innerHTML = `
+  if (event.key === "Enter") {
+    movieName = input.value;
+    fetch(`${Ombd_URL}?apiKey=${Ombd_apiKey}&t=${movieName}`)
+      .then(response => {
+        console.log(response);
+        console.log(`${Ombd_URL}?apiKey=${Ombd_apiKey}&t=${movieName}`);
+        return response.json();
+      })
+      .then(movieData => {
+        if (movieData.response === "False") {
+          output.innerHTML = `<p style="color:red;">No Movie found!!!<br> Enter a valid Movie Name!! :(</p>`;
+          return;
+        }
+        console.log("Movie name --> ", movieData.Title);
+        console.log("Released date --> ", movieData.Released);
+        console.log("Runtime ---> ", movieData.Runtime);
+        let timelength = parseInt(movieData.Runtime);
+        let str = convertMinutesToHMS(timelength);
+        output.innerHTML = `
         <br>
         <img src="${movieData.Poster}" alt="${movieData.Title} Poster">
         <p><strong>Movie Name:</strong> ${movieData.Title}</p>
@@ -51,15 +96,15 @@ input.addEventListener("keydown", (event) => {
         <p><strong>Country:</strong> ${movieData.Country}</p>
         <p><strong>Awards:</strong> ${movieData.Awards}</p>
         <p><strong>IMDb Rating:</strong> ${movieData.imdbRating}</p>
-        <p><strong>Box Office:</strong> ${movieData.BoxOffice}</p>`;      
-    })
-    .catch(error => {
-      console.log("some error occur :(", error);
-    })
+        <p><strong>Box Office:</strong> ${movieData.BoxOffice}</p>`;
+      })
+      .catch(error => {
+        console.log("some error occur :(", error);
+      })
   }
 });
 
 slider.addEventListener('wheel', (event) => {
-    event.preventDefault(); 
-    slider.scrollLeft += event.deltaY;
+  event.preventDefault();
+  slider.scrollLeft += event.deltaY;
 });
